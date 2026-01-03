@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-        :root {
+        :root[data-theme="blue"] {
             --primary: #4A90E2;
             --secondary: #50C9CE;
             --accent: #2E5BBA;
@@ -21,8 +21,21 @@
             --bg-gradient-2: #E0F7FA;
             --text-dark: #1A3A52;
             --text-light: #4A7C9B;
-            --shadow-blue: rgba(74, 144, 226, 0.3);
-            --shadow-cyan: rgba(80, 201, 206, 0.2);
+            --shadow-color: rgba(74, 144, 226, 0.3);
+            --shadow-color-2: rgba(80, 201, 206, 0.2);
+        }
+
+        :root[data-theme="pink"] {
+            --primary: #FF6B9D;
+            --secondary: #FFAB91;
+            --accent: #D84797;
+            --success: #FF8A80;
+            --bg-gradient-1: #FFF0F3;
+            --bg-gradient-2: #FFE8E0;
+            --text-dark: #4A1942;
+            --text-light: #9B5D7C;
+            --shadow-color: rgba(255, 107, 157, 0.3);
+            --shadow-color-2: rgba(255, 171, 145, 0.2);
         }
 
         body {
@@ -33,6 +46,7 @@
             color: var(--text-dark);
             position: relative;
             overflow-x: hidden;
+            transition: background 0.5s ease;
         }
 
         body::before {
@@ -42,10 +56,11 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, var(--shadow-color) 0%, transparent 70%);
             animation: float 20s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
+            transition: background 0.5s ease;
         }
 
         @keyframes float {
@@ -87,22 +102,57 @@
             background-clip: text;
             margin-bottom: 10px;
             letter-spacing: -1px;
-            text-shadow: 0 4px 20px var(--shadow-blue);
+            text-shadow: 0 4px 20px var(--shadow-color);
+            transition: all 0.5s ease;
         }
 
         .subtitle {
             font-size: clamp(0.9rem, 2vw, 1.1rem);
             color: var(--text-light);
             font-weight: 500;
+            transition: color 0.5s ease;
+        }
+
+        .theme-switch {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .theme-btn {
+            padding: 10px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            background: white;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .theme-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border-color: transparent;
         }
 
         .input-section {
             background: white;
             border-radius: 24px;
             padding: 24px;
-            box-shadow: 0 8px 30px var(--shadow-blue), 0 4px 15px var(--shadow-cyan);
+            box-shadow: 0 8px 30px var(--shadow-color), 0 4px 15px var(--shadow-color-2);
             margin-bottom: 30px;
             animation: fadeInUp 0.6s ease-out 0.2s both;
+            transition: box-shadow 0.5s ease;
         }
 
         @keyframes fadeInUp {
@@ -139,7 +189,7 @@
             outline: none;
             border-color: var(--primary);
             background: white;
-            box-shadow: 0 4px 20px var(--shadow-blue);
+            box-shadow: 0 4px 20px var(--shadow-color);
             transform: translateY(-2px);
         }
 
@@ -154,12 +204,12 @@
             font-family: 'Poppins', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px var(--shadow-blue);
+            box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .add-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 25px var(--shadow-blue);
+            box-shadow: 0 6px 25px var(--shadow-color);
         }
 
         .add-btn:active {
@@ -182,6 +232,7 @@
             margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 3px solid var(--bg-gradient-1);
+            transition: border-color 0.5s ease;
         }
 
         .section-icon {
@@ -193,6 +244,7 @@
             font-size: clamp(1.3rem, 3vw, 1.8rem);
             font-weight: 700;
             color: var(--text-dark);
+            transition: color 0.5s ease;
         }
 
         .todo-item, .completed-item {
@@ -222,11 +274,11 @@
         .todo-item:hover {
             transform: translateX(5px);
             border-color: var(--primary);
-            box-shadow: 0 4px 20px var(--shadow-blue);
+            box-shadow: 0 4px 20px var(--shadow-color);
         }
 
         .completed-item {
-            background: linear-gradient(135deg, rgba(0, 184, 169, 0.1) 0%, rgba(46, 91, 186, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(0, 184, 169, 0.1) 0%, rgba(132, 94, 194, 0.1) 100%);
             opacity: 0.9;
         }
 
@@ -268,6 +320,7 @@
             font-size: 16px;
             font-weight: 500;
             color: var(--text-dark);
+            transition: color 0.5s ease;
         }
 
         .completed-item .task-text {
@@ -281,6 +334,7 @@
             flex-wrap: wrap;
             font-size: 12px;
             color: var(--text-light);
+            transition: color 0.5s ease;
         }
 
         .date-badge {
@@ -296,6 +350,7 @@
             background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
             color: white;
             font-weight: 600;
+            transition: background 0.5s ease;
         }
 
         .empty-state {
@@ -303,6 +358,7 @@
             padding: 40px 20px;
             color: var(--text-light);
             font-size: 16px;
+            transition: color 0.5s ease;
         }
 
         .empty-state-icon {
@@ -318,7 +374,7 @@
 
         .drag-over {
             border-color: var(--accent) !important;
-            background: rgba(46, 91, 186, 0.1);
+            background: rgba(132, 94, 194, 0.1);
         }
 
         .edit-btn, .delete-btn {
@@ -353,7 +409,7 @@
 
         .edit-input:focus {
             outline: none;
-            box-shadow: 0 2px 10px var(--shadow-blue);
+            box-shadow: 0 2px 10px var(--shadow-color);
         }
 
         .edit-actions {
@@ -446,6 +502,15 @@
             .drag-handle {
                 font-size: 18px;
             }
+
+            .theme-switch {
+                flex-wrap: wrap;
+            }
+
+            .theme-btn {
+                flex: 1;
+                min-width: 120px;
+            }
         }
 
         .pulse {
@@ -464,6 +529,11 @@
             <h1>✨ やる気ToDo ✨</h1>
             <p class="subtitle">今日も頑張りましょう！一歩ずつ前進💪</p>
         </header>
+
+        <div class="theme-switch">
+            <button class="theme-btn active" data-theme="blue">🔵 ブルー</button>
+            <button class="theme-btn" data-theme="pink">💗 ピンク</button>
+        </div>
 
         <div class="input-section">
             <div class="input-wrapper">
@@ -506,11 +576,13 @@
         let draggedIndex = null;
         let isCompleted = false;
         let editingId = null;
+        let currentTheme = 'blue';
 
-        // ページ読み込み時にデータを復元
+        // ページ読み込み時にデータとテーマを復元
         window.addEventListener('DOMContentLoaded', () => {
             const savedTodos = localStorage.getItem('todos');
             const savedCompleted = localStorage.getItem('completedTodos');
+            const savedTheme = localStorage.getItem('theme') || 'blue';
             
             if (savedTodos) {
                 todos = JSON.parse(savedTodos);
@@ -519,7 +591,16 @@
                 completedTodos = JSON.parse(savedCompleted);
             }
             
+            setTheme(savedTheme);
             render();
+            
+            // テーマ切り替えボタンのイベント
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const theme = btn.dataset.theme;
+                    setTheme(theme);
+                });
+            });
             
             // イベント委譲で編集・削除・移動ボタンを処理
             document.addEventListener('click', (e) => {
@@ -541,6 +622,21 @@
                 }
             });
         });
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            // ボタンのアクティブ状態を更新
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                if (btn.dataset.theme === theme) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
 
         // データを保存
         function saveData() {
