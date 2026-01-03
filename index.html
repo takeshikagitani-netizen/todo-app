@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ やる気ToDo ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50C9CE;
+            --accent: #2E5BBA;
+            --success: #00B8A9;
+            --bg-gradient-1: #E3F2FD;
+            --bg-gradient-2: #E0F7FA;
+            --text-dark: #1A3A52;
+            --text-light: #4A7C9B;
+            --shadow-blue: rgba(74, 144, 226, 0.3);
+            --shadow-cyan: rgba(80, 201, 206, 0.2);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-dark);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, 30px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 20px var(--shadow-blue);
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 30px var(--shadow-blue), 0 4px 15px var(--shadow-cyan);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 20px;
+            border: 3px solid transparent;
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-gradient-1);
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 4px 20px var(--shadow-blue);
+            transform: translateY(-2px);
+        }
+
+        .add-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-blue);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px var(--shadow-blue);
+        }
+
+        .add-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .section {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid var(--bg-gradient-1);
+        }
+
+        .section-icon {
+            font-size: 28px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .todo-item, .completed-item {
+            background: var(--bg-gradient-1);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px var(--shadow-blue);
+        }
+
+        .completed-item {
+            background: linear-gradient(135deg, rgba(0, 184, 169, 0.1) 0%, rgba(46, 91, 186, 0.1) 100%);
+            opacity: 0.9;
+        }
+
+        .completed-item:hover {
+            transform: translateX(5px);
+            border-color: var(--success);
+            opacity: 1;
+        }
+
+        .drag-handle {
+            cursor: move;
+            font-size: 20px;
+            color: var(--text-light);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            user-select: none;
+        }
+
+        .drag-handle:hover {
+            opacity: 1;
+        }
+
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            accent-color: var(--success);
+            transform: scale(1.3);
+        }
+
+        .task-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .task-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .completed-item .task-text {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .task-dates {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .date-badge {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .completed-date {
+            background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .drag-over {
+            border-color: var(--accent) !important;
+            background: rgba(46, 91, 186, 0.1);
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .delete-btn {
+            color: #d32f2f;
+        }
+
+        .edit-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Noto Sans JP', sans-serif;
+            background: white;
+            color: var(--text-dark);
+        }
+
+        .edit-input:focus {
+            outline: none;
+            box-shadow: 0 2px 10px var(--shadow-blue);
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .save-btn, .cancel-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 184, 169, 0.3);
+        }
+
+        .cancel-btn {
+            background: #ccc;
+            color: #666;
+        }
+
+        .cancel-btn:hover {
+            background: #bbb;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .input-section, .section {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+            }
+
+            input[type="text"] {
+                min-width: 100%;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+
+            .task-dates {
+                font-size: 11px;
+            }
+
+            .drag-handle {
+                font-size: 18px;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ やる気ToDo ✨</h1>
+            <p class="subtitle">今日も頑張りましょう！一歩ずつ前進💪</p>
+        </header>
+
+        <div class="input-section">
+            <div class="input-wrapper">
+                <input type="text" id="todoInput" placeholder="新しいタスクを入力してください..." />
+                <button class="add-btn" onclick="addTodo()">➕ 追加</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📋</span>
+                <h2 class="section-title">現在のタスク</h2>
+            </div>
+            <div id="todoList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎯</div>
+                    <p>タスクがありません。新しいタスクを追加しましょう！</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2 class="section-title">終了タスク</h2>
+            </div>
+            <div id="completedList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🌟</div>
+                    <p>まだ完了したタスクはありません</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let todos = [];
+        let completedTodos = [];
+        let draggedElement = null;
+        let draggedIndex = null;
+        let isCompleted = false;
+        let editingId = null;
+
+        // ページ読み込み時にデータを復元
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTodos = localStorage.getItem('todos');
+            const savedCompleted = localStorage.getItem('completedTodos');
+            
+            if (savedTodos) {
+                todos = JSON.parse(savedTodos);
+            }
+            if (savedCompleted) {
+                completedTodos = JSON.parse(savedCompleted);
+            }
+            
+            render();
+            
+            // イベント委譲で編集・削除ボタンを処理
+            document.addEventListener('click', (e) => {
+                const button = e.target.closest('[data-action]');
+                if (!button) return;
+                
+                const action = button.dataset.action;
+                const id = parseInt(button.dataset.id);
+                const isCompleted = button.dataset.completed === 'true';
+                
+                if (action === 'edit') {
+                    startEdit(id, isCompleted);
+                } else if (action === 'delete') {
+                    deleteTodo(id, isCompleted);
+                }
+            });
+        });
+
+        // データを保存
+        function saveData() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+            localStorage.setItem('completedTodos', JSON.stringify(completedTodos));
+        }
+
+        // Enterキーでタスク追加
+        document.getElementById('todoInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+            
+            const todo = {
+                id: Date.now(),
+                text: text,
+                createdAt: new Date().toISOString(),
+                completed: false
+            };
+            
+            todos.push(todo);
+            input.value = '';
+            saveData();
+            render();
+        }
+
+        function toggleTodo(id) {
+            const index = todos.findIndex(t => t.id === id);
+            if (index === -1) return;
+            
+            const todo = todos[index];
+            todo.completedAt = new Date().toISOString();
+            
+            todos.splice(index, 1);
+            completedTodos.unshift(todo);
+            
+            saveData();
+            render();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${month}/${day} ${hours}:${minutes}`;
+        }
+
+        function startEdit(id, isCompletedTask) {
+            editingId = id;
+            render();
+        }
+
+        function saveEdit(id, isCompletedTask) {
+            const input = document.getElementById(`edit-input-${id}`);
+            const newText = input.value.trim();
+            
+            if (newText === '') {
+                alert('タスク内容を入力してください');
+                return;
+            }
+            
+            const list = isCompletedTask ? completedTodos : todos;
+            const todo = list.find(t => t.id === id);
+            if (todo) {
+                todo.text = newText;
+            }
+            
+            editingId = null;
+            saveData();
+            render();
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            render();
+        }
+
+        function deleteTodo(id, isCompletedTask) {
+            if (!confirm('このタスクを削除してもよろしいですか？')) {
+                return;
+            }
+            
+            if (isCompletedTask) {
+                completedTodos = completedTodos.filter(t => t.id !== id);
+            } else {
+                todos = todos.filter(t => t.id !== id);
+            }
+            
+            saveData();
+            render();
+        }
+
+        // ドラッグ&ドロップ処理
+        function handleDragStart(e, index, completed) {
+            draggedElement = e.target;
+            draggedIndex = index;
+            isCompleted = completed;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const target = e.target.closest('.todo-item, .completed-item');
+            if (target && target !== draggedElement) {
+                target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            const target = e.target.closest('.todo-item, .completed-item');
+            if (target) {
+                target.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e, dropIndex, dropCompleted) {
+            e.preventDefault();
+            
+            const target = e.target.closest('.todo-item, .completed-item');
+            if (target) {
+                target.classList.remove('drag-over');
+            }
+            
+            if (draggedIndex === null || isCompleted !== dropCompleted) return;
+            
+            const list = isCompleted ? completedTodos : todos;
+            const [movedItem] = list.splice(draggedIndex, 1);
+            list.splice(dropIndex, 0, movedItem);
+            
+            saveData();
+            render();
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(el => {
+                el.classList.remove('drag-over');
+            });
+            draggedElement = null;
+            draggedIndex = null;
+        }
+
+        function render() {
+            const todoList = document.getElementById('todoList');
+            const completedList = document.getElementById('completedList');
+            
+            // 現在のタスク
+            if (todos.length === 0) {
+                todoList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <p>タスクがありません。新しいタスクを追加しましょう！</p>
+                    </div>
+                `;
+            } else {
+                todoList.innerHTML = todos.map((todo, index) => {
+                    if (editingId === todo.id) {
+                        return `
+                            <div class="todo-item">
+                                <span class="drag-handle" style="opacity: 0.3;">⋮⋮</span>
+                                <input type="checkbox" class="checkbox" disabled style="opacity: 0.3;">
+                                <input type="text" 
+                                       id="edit-input-${todo.id}" 
+                                       class="edit-input" 
+                                       value="${escapeHtml(todo.text)}"
+                                       onkeypress="if(event.key==='Enter') saveEdit(${todo.id}, false)">
+                                <div class="edit-actions">
+                                    <button class="save-btn" onclick="saveEdit(${todo.id}, false)">保存</button>
+                                    <button class="cancel-btn" onclick="cancelEdit()">キャンセル</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    return `
+                        <div class="todo-item" 
+                             draggable="true"
+                             ondragstart="handleDragStart(event, ${index}, false)"
+                             ondragover="handleDragOver(event)"
+                             ondragleave="handleDragLeave(event)"
+                             ondrop="handleDrop(event, ${index}, false)"
+                             ondragend="handleDragEnd(event)">
+                            <span class="drag-handle">⋮⋮</span>
+                            <input type="checkbox" 
+                                   class="checkbox" 
+                                   onchange="toggleTodo(${todo.id})">
+                            <div class="task-content">
+                                <div class="task-text">${escapeHtml(todo.text)}</div>
+                                <div class="task-dates">
+                                    <span class="date-badge">📅 登録: ${formatDate(todo.createdAt)}</span>
+                                </div>
+                            </div>
+                            <button class="edit-btn" data-action="edit" data-id="${todo.id}" data-completed="false" title="編集">✏️</button>
+                            <button class="delete-btn" data-action="delete" data-id="${todo.id}" data-completed="false" title="削除">🗑️</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // 終了タスク
+            if (completedTodos.length === 0) {
+                completedList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🌟</div>
+                        <p>まだ完了したタスクはありません</p>
+                    </div>
+                `;
+            } else {
+                completedList.innerHTML = completedTodos.map((todo, index) => {
+                    if (editingId === todo.id) {
+                        return `
+                            <div class="completed-item">
+                                <span class="drag-handle" style="opacity: 0.3;">⋮⋮</span>
+                                <input type="checkbox" class="checkbox" checked disabled style="opacity: 0.3;">
+                                <input type="text" 
+                                       id="edit-input-${todo.id}" 
+                                       class="edit-input" 
+                                       value="${escapeHtml(todo.text)}"
+                                       onkeypress="if(event.key==='Enter') saveEdit(${todo.id}, true)">
+                                <div class="edit-actions">
+                                    <button class="save-btn" onclick="saveEdit(${todo.id}, true)">保存</button>
+                                    <button class="cancel-btn" onclick="cancelEdit()">キャンセル</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    return `
+                        <div class="completed-item"
+                             draggable="true"
+                             ondragstart="handleDragStart(event, ${index}, true)"
+                             ondragover="handleDragOver(event)"
+                             ondragleave="handleDragLeave(event)"
+                             ondrop="handleDrop(event, ${index}, true)"
+                             ondragend="handleDragEnd(event)">
+                            <span class="drag-handle">⋮⋮</span>
+                            <input type="checkbox" 
+                                   class="checkbox" 
+                                   checked 
+                                   disabled>
+                            <div class="task-content">
+                                <div class="task-text">${escapeHtml(todo.text)}</div>
+                                <div class="task-dates">
+                                    <span class="date-badge">📅 登録: ${formatDate(todo.createdAt)}</span>
+                                    <span class="date-badge completed-date">✨ 完了: ${formatDate(todo.completedAt)}</span>
+                                </div>
+                            </div>
+                            <button class="edit-btn" data-action="edit" data-id="${todo.id}" data-completed="true" title="編集">✏️</button>
+                            <button class="delete-btn" data-action="delete" data-id="${todo.id}" data-completed="true" title="削除">🗑️</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初期描画
+        render();
+    </script>
+</body>
+</html>
