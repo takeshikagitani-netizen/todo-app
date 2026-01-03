@@ -390,6 +390,33 @@
             background: #bbb;
         }
 
+        .move-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .move-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 2px 6px;
+            opacity: 0.5;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            line-height: 1;
+        }
+
+        .move-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .move-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -494,7 +521,7 @@
             
             render();
             
-            // イベント委譲で編集・削除ボタンを処理
+            // イベント委譲で編集・削除・移動ボタンを処理
             document.addEventListener('click', (e) => {
                 const button = e.target.closest('[data-action]');
                 if (!button) return;
@@ -507,6 +534,10 @@
                     startEdit(id, isCompleted);
                 } else if (action === 'delete') {
                     deleteTodo(id, isCompleted);
+                } else if (action === 'moveUp') {
+                    moveUp(id, isCompleted);
+                } else if (action === 'moveDown') {
+                    moveDown(id, isCompleted);
                 }
             });
         });
@@ -611,6 +642,28 @@
             render();
         }
 
+        function moveUp(id, isCompletedTask) {
+            const list = isCompletedTask ? completedTodos : todos;
+            const index = list.findIndex(t => t.id === id);
+            
+            if (index > 0) {
+                [list[index], list[index - 1]] = [list[index - 1], list[index]];
+                saveData();
+                render();
+            }
+        }
+
+        function moveDown(id, isCompletedTask) {
+            const list = isCompletedTask ? completedTodos : todos;
+            const index = list.findIndex(t => t.id === id);
+            
+            if (index < list.length - 1) {
+                [list[index], list[index + 1]] = [list[index + 1], list[index]];
+                saveData();
+                render();
+            }
+        }
+
         // ドラッグ&ドロップ処理
         function handleDragStart(e, index, completed) {
             draggedElement = e.target;
@@ -704,6 +757,10 @@
                              ondrop="handleDrop(event, ${index}, false)"
                              ondragend="handleDragEnd(event)">
                             <span class="drag-handle">⋮⋮</span>
+                            <div class="move-buttons">
+                                <button class="move-btn" data-action="moveUp" data-id="${todo.id}" data-completed="false" title="上に移動" ${index === 0 ? 'disabled' : ''}>▲</button>
+                                <button class="move-btn" data-action="moveDown" data-id="${todo.id}" data-completed="false" title="下に移動" ${index === todos.length - 1 ? 'disabled' : ''}>▼</button>
+                            </div>
                             <input type="checkbox" 
                                    class="checkbox" 
                                    onchange="toggleTodo(${todo.id})">
@@ -756,6 +813,10 @@
                              ondrop="handleDrop(event, ${index}, true)"
                              ondragend="handleDragEnd(event)">
                             <span class="drag-handle">⋮⋮</span>
+                            <div class="move-buttons">
+                                <button class="move-btn" data-action="moveUp" data-id="${todo.id}" data-completed="true" title="上に移動" ${index === 0 ? 'disabled' : ''}>▲</button>
+                                <button class="move-btn" data-action="moveDown" data-id="${todo.id}" data-completed="true" title="下に移動" ${index === completedTodos.length - 1 ? 'disabled' : ''}>▼</button>
+                            </div>
                             <input type="checkbox" 
                                    class="checkbox" 
                                    checked 
